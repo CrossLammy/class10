@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+gg = 1
+
 window = tk.Tk()
 window.title('Login')
 window.geometry('600x500+500+150')
