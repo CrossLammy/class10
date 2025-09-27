@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-gg = 1
+test = 100
 
 window = tk.Tk()
 window.title('Login')
