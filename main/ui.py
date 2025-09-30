@@ -14,7 +14,14 @@ height = tk.StringVar()
 age = tk.StringVar()
 activity = tk.StringVar()
 
-#funtion
+
+
+
+# function
+
+# def btn_submit():
+#     result_text = f"Gender: {Gender}\nWeight: {Weight} kg\nHeight: {Height} cm\nAge: {Age}\nActivity: {Activity}"
+#     output_label.config(text=result_text)
 
 def btn_submit():
     try:
@@ -22,41 +29,9 @@ def btn_submit():
         w = int(weight.get())
         h = int(height.get())
         a = int(age.get())
-
-        bmr = BMR(g, w, h, a)
-        tdee = cal_tdee(bmr)
-        
-        result_text = f'BMR = {int(bmr)} kcal\nTDEE = {int(tdee)} kcal'
-        output_label.config(text=result_text)
-        
+        print(g,w,h,a)
     except ValueError:
         messagebox.showerror("Data Error", "ผู้ใช้ต้องใส่ตัวเลข")
-
-def BMR(g, w, h, a):
-    if g.lower() == 'men':
-        return 88.362 + (13.397 * w) + (4.799 * h) - (5.677 * a)
-    elif g.lower() == 'women':
-        return 447.593 + (9.247 * w) + (3.098 * h) - (4.330 * a)
-    else:
-        return 0
-
-
-def cal_tdee(bmr):
-    act = activity.get().lower()
-    if act == 'sedentary':
-        tdee = bmr * 1.2
-    elif act == 'lightly active':
-        tdee = bmr * 1.375
-    elif act == 'moderately active':
-        tdee = bmr * 1.55
-    elif act == 'very active':
-        tdee = bmr * 1.725
-    elif act == 'super active':
-        tdee = bmr * 1.9
-    else:
-        tdee = bmr
-    return tdee
-
 
 
 # main frame
@@ -68,15 +43,14 @@ left_frame = ttk.Frame(form)
 left_frame.grid(row=0, column=0, padx=10, pady=10, sticky='n')
 
 ttk.Label(left_frame, text="Gender").grid(row=0, column=0, sticky='w')
-tk.Radiobutton(left_frame, text="Men", variable=gender, value='men').grid(row=1, column=0, sticky='w')
+tk.Radiobutton(left_frame, text="Men", variable=gender, value='mem').grid(row=1, column=0, sticky='w')
 tk.Radiobutton(left_frame, text="Women", variable=gender, value='women').grid(row=2, column=0, sticky='w')
-gender.set('men')
+gender.set(1)
 
 ttk.Label(left_frame, text="Activity Level").grid(row=3, column=0, pady=(10, 0), sticky='w')
 ttk.Combobox(left_frame, textvariable=activity, values=[
     "Sedentary", "Lightly active", "Moderately active", "Very active", "Super active"
 ]).grid(row=4, column=0, sticky='w')
-activity.set('Sedentary')
 
 # right module (weight, height, age)
 right_frame = ttk.Frame(form)
@@ -95,7 +69,7 @@ tk.Entry(right_frame, textvariable=age).grid(row=5, column=0, sticky='w')
 ttk.Button(form, command=btn_submit, text="Submit").grid(row=1, column=0, columnspan=2, pady=10)
 
 # output label
-output_label = tk.Label(window, text=f"BMR = ? kcal\nTDEE = ? kcal", font=('Arial', 12), justify='left', fg='blue')
+output_label = tk.Label(window, text="XXX", font=('Arial', 12), justify='left', fg='blue')
 output_label.pack(pady=10)
 
 window.mainloop()
