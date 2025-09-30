@@ -3,34 +3,59 @@ from tkinter import ttk
 from tkinter import messagebox
 
 window = tk.Tk()
-window.title('Login')
-window.geometry('600x500+500+150')  
+window.title('BMR & TDEE Calculator')
+window.geometry('650x520+500+150')
 window.resizable(False, False)
 
-# store Variable
+# Style
+style = ttk.Style()
+style.configure('TLabel', font=('Arial', 11))
+style.configure('TButton', font=('Arial', 11), padding=6)
+style.configure('TCombobox', font=('Arial', 11))
+
+# Variables
 gender = tk.StringVar()
-weight = tk.StringVar() 
+weight = tk.StringVar()
 height = tk.StringVar()
 age = tk.StringVar()
 activity = tk.StringVar()
+goal = tk.StringVar()
 
-#funtion
-
+# Functions
 def btn_submit():
     try:
         g = gender.get()
         w = int(weight.get())
         h = int(height.get())
         a = int(age.get())
-
         bmr = BMR(g, w, h, a)
         tdee = cal_tdee(bmr)
-        
-        result_text = f'BMR = {int(bmr)} kcal\nTDEE = {int(tdee)} kcal'
+
+        target_tdee = goal_cal(tdee)
+
+        result_text = (
+            f'💪 BMR = {int(bmr)} kcal\n'
+            f'🔥 TDEE = {int(tdee)} kcal\n'
+            f'🎯 Goal ({goal.get()}) = {int(target_tdee)} kcal'
+        )
         output_label.config(text=result_text)
-        
+
     except ValueError:
-        messagebox.showerror("Data Error", "ผู้ใช้ต้องใส่ตัวเลข")
+        messagebox.showerror("Data Error", "กรุณาใส่ตัวเลขให้ถูกต้อง")
+
+def goal_cal(tdee):
+    g_choice = goal.get().lower()
+    if g_choice == "gain weight":
+        target_cal = tdee + 500
+        return target_cal
+    elif g_choice == "lose weight":
+        target_cal = tdee - 500
+        return target_cal
+    else:
+        target_cal = tdee
+        return target_cal
+    
+
 
 def BMR(g, w, h, a):
     if g.lower() == 'men':
@@ -40,31 +65,26 @@ def BMR(g, w, h, a):
     else:
         return 0
 
-
 def cal_tdee(bmr):
     act = activity.get().lower()
     if act == 'sedentary':
-        tdee = bmr * 1.2
+        return bmr * 1.2
     elif act == 'lightly active':
-        tdee = bmr * 1.375
+        return bmr * 1.375
     elif act == 'moderately active':
-        tdee = bmr * 1.55
+        return bmr * 1.55
     elif act == 'very active':
-        tdee = bmr * 1.725
+        return bmr * 1.725
     elif act == 'super active':
-        tdee = bmr * 1.9
-    else:
-        tdee = bmr
-    return tdee
+        return bmr * 1.9
+    return bmr
 
-
-
-# main frame
+# Main Frame
 form = ttk.Frame(window)
 form.pack(padx=20, pady=20, expand=True)
 
-# left module (gender + activity)
-left_frame = ttk.Frame(form)
+# Left Frame (Gender + Activity)
+left_frame = ttk.LabelFrame(form, text="ข้อมูลทั่วไป")
 left_frame.grid(row=0, column=0, padx=10, pady=10, sticky='n')
 
 ttk.Label(left_frame, text="Gender").grid(row=0, column=0, sticky='w')
@@ -75,27 +95,38 @@ gender.set('men')
 ttk.Label(left_frame, text="Activity Level").grid(row=3, column=0, pady=(10, 0), sticky='w')
 ttk.Combobox(left_frame, textvariable=activity, values=[
     "Sedentary", "Lightly active", "Moderately active", "Very active", "Super active"
-]).grid(row=4, column=0, sticky='w')
+], state='readonly').grid(row=4, column=0, sticky='w')
 activity.set('Sedentary')
 
-# right module (weight, height, age)
-right_frame = ttk.Frame(form)
-right_frame.grid(row=0, column=1, padx=10, pady=10, sticky='n')
+# Center Frame (Goal)
+center_frame = ttk.LabelFrame(form, text="เป้าหมาย")
+center_frame.grid(row=0, column=1, padx=10, pady=10, sticky='n')
+
+ttk.Label(center_frame, text="Goal").grid(row=0, column=0, pady=(10, 0), sticky='w')
+ttk.Combobox(center_frame, textvariable=goal, values=[
+    "Maintain weight", "Gain weight", "Lose weight"
+], state='readonly').grid(row=1, column=0, sticky='w')
+goal.set("Maintain weight")
+
+# Right Frame (Weight, Height, Age)
+right_frame = ttk.LabelFrame(form, text="ข้อมูลร่างกาย")
+right_frame.grid(row=0, column=2, padx=10, pady=10, sticky='n')
 
 ttk.Label(right_frame, text="Weight (kg)").grid(row=0, column=0, sticky='w')
-tk.Entry(right_frame, textvariable=weight).grid(row=1, column=0, sticky='w')
+tk.Entry(right_frame, textvariable=weight, font=('Arial', 11)).grid(row=1, column=0, sticky='w')
 
 ttk.Label(right_frame, text="Height (cm)").grid(row=2, column=0, sticky='w')
-tk.Entry(right_frame, textvariable=height).grid(row=3, column=0, sticky='w')
+tk.Entry(right_frame, textvariable=height, font=('Arial', 11)).grid(row=3, column=0, sticky='w')
 
 ttk.Label(right_frame, text="Age").grid(row=4, column=0, sticky='w')
-tk.Entry(right_frame, textvariable=age).grid(row=5, column=0, sticky='w')
+tk.Entry(right_frame, textvariable=age, font=('Arial', 11)).grid(row=5, column=0, sticky='w')
 
-# submit button
-ttk.Button(form, command=btn_submit, text="Submit").grid(row=1, column=0, columnspan=2, pady=10)
+# Submit Button
+ttk.Button(form, command=btn_submit, text="คำนวณ").grid(row=1, column=0, columnspan=3, pady=15)
 
-# output label
-output_label = tk.Label(window, text=f"BMR = ? kcal\nTDEE = ? kcal", font=('Arial', 12), justify='left', fg='blue')
-output_label.pack(pady=10)
+# Output Label
+output_label = tk.Label(form, text="💪 BMR = ? kcal\n🔥 TDEE = ? kcal\n🎯 Goal = ? kcal",
+font=('Arial', 12), justify='left', fg='blue')
+output_label.grid(row=2, column=0, columnspan=3)
 
 window.mainloop()
