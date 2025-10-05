@@ -28,9 +28,9 @@ def btn_submit():
         w = int(weight.get())
         h = int(height.get())
         a = int(age.get())
+
         bmr = BMR(g, w, h, a)
         tdee = cal_tdee(bmr)
-
         target_tdee = goal_cal(tdee)
 
         result_text = (
