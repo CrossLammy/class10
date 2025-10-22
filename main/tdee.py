@@ -28,18 +28,27 @@ def btn_submit():
         w = int(weight.get())
         h = int(height.get())
         a = int(age.get())
-
         bmr = BMR(g, w, h, a)
         tdee = cal_tdee(bmr)
         target_tdee = goal_cal(tdee)
-
+        
+        try:
+            if w <= 0 or h <= 0 or a <= 0:
+                raise ValueError("น้ำหนัก ส่วนสูง และอายุ ต้องเป็นค่าบวกเท่านั้น")
+            elif tdee < 1000:
+                raise ValueError("TDEE ต่ำเกินไป เป็นไปไม่ได้")
+            elif tdee > 7000:
+                raise ValueError("TDEE สูงเกินไป เป็นไปไม่ได้")
+        except ValueError as e:
+            messagebox.showerror("TDEE Error", str(e))
+            return  # หยุดการทำงานต่อ
+        
         result_text = (
             f'💪 BMR = {int(bmr)} kcal\n'
             f'🔥 TDEE = {int(tdee)} kcal\n'
             f'🎯 Goal ({goal.get()}) = {int(target_tdee)} kcal'
         )
         output_label.config(text=result_text)
-
     except ValueError:
         messagebox.showerror("Data Error", "กรุณาใส่ตัวเลขให้ถูกต้อง")
 
@@ -59,9 +68,9 @@ def goal_cal(tdee):
 
 def BMR(g, w, h, a):
     if g.lower() == 'men':
-        return 88.362 + (13.397 * w) + (4.799 * h) - (5.677 * a)
+        return (10 * w) + (6.25 * h) - (5 * a) + 5
     elif g.lower() == 'women':
-        return 447.593 + (9.247 * w) + (3.098 * h) - (4.330 * a)
+        return (10 * w) + (6.25 * h) - (5 * a) - 161
     else:
         return 0
 
